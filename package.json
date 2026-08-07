@@ -1,0 +1,23 @@
+{
+  "name": "e2e-personal-page-playwright-claude-agentic",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MartinBruska/e2e-personal-page-playwright-claude-agentic.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/MartinBruska/e2e-personal-page-playwright-claude-agentic/issues"
+  },
+  "homepage": "https://github.com/MartinBruska/e2e-personal-page-playwright-claude-agentic#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^26.1.2"
+  }
+}
