@@ -17,7 +17,9 @@
   },
   "homepage": "https://github.com/MartinBruska/e2e-personal-page-playwright-claude-agentic#readme",
   "devDependencies": {
+    "@playwright/cli": "^0.1.18",
     "@playwright/test": "^1.62.1",
-    "@types/node": "^26.1.2"
+    "@types/node": "^26.1.2",
+    "dotenv": "^17.4.2"
   }
 }
