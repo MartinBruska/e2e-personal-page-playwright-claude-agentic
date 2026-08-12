@@ -64,7 +64,7 @@ Compare existing tests against discovered pages and journeys.
 
 **Analysis steps:**
 1. Scan `tests/` for existing executable specs (e.g. `tests/e2e/**/*.spec.ts`) and recursively scan `tests/test_cases/**/` (all feature subfolders) for existing generated test case docs
-2. Scan `pages/` for existing page objects
+2. Scan `tests/pages/` and `tests/components/` for existing page objects/components
 3. Compare against the discovered site map
 4. Identify:
    - Pages with no corresponding tests
@@ -95,11 +95,13 @@ Compare existing tests against discovered pages and journeys.
 ## Usage
 
 ```
-Run the test-generator agent against https://example.com
+Run the test-case-generator agent against https://example.com
 ```
 
 The agent will:
 1. Explore the site and build a page inventory
 2. Map user journeys by priority
 3. Generate one test case file per journey, following `docs/TEST_CASE_TEMPLATE.md`, saved to `tests/test_cases/<feature-or-tag>/` (subfolders created as needed)
-4. Produce a coverage gap report
+4. Produce a coverage gap report, then **stop**
+
+**Do not auto-chain into `e2e-test-generator`.** This agent's run ends at the coverage report. Never spawn, invoke, or otherwise trigger the `e2e-test-generator` agent as part of this workflow, even when the coverage report recommends adding tests — implementing test case docs as executable Playwright specs is a distinct, separately-triggered task that only starts when the user (or orchestrator) explicitly asks for it in a new request. At most, mention in the final report that `e2e-test-generator` is available for that next step; do not start it.
