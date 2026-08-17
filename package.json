@@ -3,7 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test:e2e": "playwright test",
+    "test:e2e:prod": "cross-env ENV=production playwright test --trace on-first-retry",
+    "allure:generate": "allure generate allure-results --clean -o allure-report",
+    "allure:open": "allure open allure-report",
+    "allure:serve": "allure serve allure-results"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MartinBruska/e2e-personal-page-playwright-claude-agentic.git"
@@ -20,6 +26,9 @@
     "@playwright/cli": "^0.1.18",
     "@playwright/test": "^1.62.1",
     "@types/node": "^26.1.2",
+    "allure-commandline": "^2.43.0",
+    "allure-playwright": "^3.10.2",
+    "cross-env": "^10.1.0",
     "dotenv": "^17.4.2"
   }
 }
