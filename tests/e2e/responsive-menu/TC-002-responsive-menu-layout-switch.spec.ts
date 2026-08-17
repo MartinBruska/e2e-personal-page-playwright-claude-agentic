@@ -91,7 +91,7 @@ test.describe('TC-002: Responsive Menu Layout Switch @cross-browser', () => {
     });
   });
 
-  test('Step 3: breakpoint boundary at 768px (767 mobile, 768 mobile-inclusive, 769 desktop)', async ({ homePage, page }) => {
+  test('Step 3: breakpoint boundary at 768px (767 mobile, 768 mobile-inclusive, 780 desktop)', async ({ homePage, page }) => {
     await test.step('767px matches the mobile media query', async () => {
       await page.setViewportSize({ width: 767, height: 900 });
       await homePage.goto();
@@ -104,8 +104,15 @@ test.describe('TC-002: Responsive Menu Layout Switch @cross-browser', () => {
       expect(await page.evaluate(() => window.matchMedia('(max-width: 768px)').matches)).toBe(true);
     });
 
-    await test.step('769px does not match the mobile media query (desktop arc applies)', async () => {
-      await page.setViewportSize({ width: 769, height: 900 });
+    // 780px (not 769px): the page has vertical overflow, and WebKit's scrollbar reserves
+    // viewport width from document.documentElement.clientWidth -- which is what matchMedia
+    // evaluates against -- while window.innerWidth does not reflect that reduction. At exactly
+    // 769px this shrinks WebKit's effective CSS viewport back under the 768px breakpoint,
+    // making the assertion flaky/false. Chromium/Firefox use an overlay scrollbar here, so
+    // clientWidth === innerWidth for them; 780px gives enough margin to clear WebKit's gutter
+    // (observed ~4px, but scrollbar width is OS/theme-dependent) on every engine.
+    await test.step('780px does not match the mobile media query (desktop arc applies)', async () => {
+      await page.setViewportSize({ width: 780, height: 900 });
       await homePage.goto();
       expect(await page.evaluate(() => window.matchMedia('(max-width: 768px)').matches)).toBe(false);
     });

@@ -49,14 +49,15 @@
 
 ---
 
-### Step 3: Breakpoint Boundary Verification (767px vs 769px, hard-coded at 768px)
+### Step 3: Breakpoint Boundary Verification (767px vs 780px, hard-coded at 768px)
 * **User Action:**
   1. Set viewport to `767x900` (one pixel below the `max-width: 768px` media query threshold — still matches mobile query). Navigate to `/`. Open the menu.
-  2. Set viewport to `769x900` (one pixel above threshold — does not match mobile query). Navigate to `/`. Open the menu.
+  2. Set viewport to `780x900` (comfortably above threshold — does not match mobile query). Navigate to `/`. Open the menu.
 * **Expected UI Behaviors & DOM Assertions:**
   * [ ] At `767x900`: menu items use the **mobile** arc (`startAngle=0`, `rotationAngle=90`), matching Step 1's geometry pattern.
-  * [ ] At `769x900`: menu items use the **desktop** arc (`startAngle=-90`, `rotationAngle=180`), matching Step 2's geometry pattern.
+  * [ ] At `780x900`: menu items use the **desktop** arc (`startAngle=-90`, `rotationAngle=180`), matching Step 2's geometry pattern.
   * [ ] At exactly `768x900`: `window.matchMedia("(max-width: 768px)").matches` is `true` (inclusive boundary) — mobile arc applies.
+  * Note: the "above threshold" check is done a few px past 769 rather than 769 itself, because WebKit's vertical scrollbar shrinks `document.documentElement.clientWidth` (what `matchMedia` evaluates against) below `window.innerWidth` on this page, which has vertical overflow. At exactly 769px that pushes WebKit's effective viewport back under 768px.
 
 ---
 
