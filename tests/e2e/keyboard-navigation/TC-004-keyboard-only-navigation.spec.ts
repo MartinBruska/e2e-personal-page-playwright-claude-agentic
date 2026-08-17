@@ -37,6 +37,7 @@ test.describe('TC-004: Keyboard-Only Navigation', () => {
     await page.keyboard.press('Tab');
     await page.keyboard.press('Enter');
     await expect(homePage.menu.container).toHaveClass(/menu-active/);
+    await expect(homePage.menu.item('go to top')).toBeVisible();
     const scrollYBefore = await page.evaluate(() => window.scrollY);
 
     await test.step('Tab visits each menu item in order: go to top -> about -> work experience -> education', async () => {
@@ -110,6 +111,7 @@ test.describe('TC-004: Keyboard-Only Navigation', () => {
 
     await page.keyboard.press('Enter');
     await expect(homePage.menu.container).toHaveClass(/menu-active/);
+    await expect(homePage.menu.item('go to top')).toBeVisible();
 
     for (const name of ['go to top', 'about', 'work experience', 'education'] as const) {
       await page.keyboard.press('Tab');
@@ -144,6 +146,7 @@ test.describe('TC-004: Keyboard-Only Navigation', () => {
         await expect(page.locator('button.menu-toggle')).toBeFocused();
         await page.keyboard.press('Enter');
         await expect(homePage.menu.container).toHaveClass(/menu-active/);
+        await expect(homePage.menu.item('go to top')).toBeVisible();
       });
 
       await test.step('Tab visits each menu item in the same logical order as desktop', async () => {
@@ -161,6 +164,7 @@ test.describe('TC-004: Keyboard-Only Navigation', () => {
     await page.keyboard.press('Tab');
     await page.keyboard.press('Enter');
     await expect(homePage.menu.container).toHaveClass(/menu-active/);
+    await expect(homePage.menu.item('go to top')).toBeVisible();
     await page.keyboard.press('Tab');
     await page.keyboard.press('Tab');
     await page.keyboard.press(' ');
