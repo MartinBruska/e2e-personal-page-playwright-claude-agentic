@@ -4,6 +4,16 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
 jobs:
   test:
     timeout-minutes: 60
@@ -34,3 +44,22 @@ jobs:
         name: allure-report
         path: allure-report/
         retention-days: 30
+    - name: Upload Allure report for Pages
+      if: ${{ !cancelled() && github.event_name == 'push' }}
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: allure-report/
+
+  deploy-report:
+    needs: test
+    if: ${{ !cancelled() && github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+    - name: Deploy Allure report to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
+    - name: Add report link to job summary
+      run: echo "### 📊 [Allure report](${{ steps.deployment.outputs.page_url }})" >> "$GITHUB_STEP_SUMMARY"
