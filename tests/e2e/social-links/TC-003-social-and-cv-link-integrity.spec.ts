@@ -37,10 +37,17 @@ test.describe('TC-003: Social & CV Link Integrity @cross-browser', () => {
     });
 
     const popup = await popupPromise;
+    // WebKit (Desktop/Mobile Safari) tears the popup down almost instantly with a
+    // "Frame load interrupted" rejection once it recognizes the target as a download --
+    // tens of milliseconds before the real `download` event arrives on `page`. Letting
+    // that rejection resolve to `null` made it win the race every time. A failed
+    // navigation is not a signal on its own, so it's swallowed into a promise that never
+    // resolves; only a genuine navigation success (branded Chrome/Edge) or the bounded
+    // `downloadPromise` (which always settles, success or timeout) can decide the race.
     const navigatedPromise = popup
       .waitForURL(/Martin_Bruska_CV\.pdf/, { timeout: 10_000 })
       .then(() => null)
-      .catch(() => null);
+      .catch(() => new Promise<null>(() => {}));
     const download = await Promise.race([downloadPromise, navigatedPromise]);
 
     await test.step('a new tab opens (does not navigate the existing tab) and resolves to the CV PDF', async () => {
