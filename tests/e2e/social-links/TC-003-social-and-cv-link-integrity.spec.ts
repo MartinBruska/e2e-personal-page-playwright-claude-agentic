@@ -27,15 +27,25 @@ test.describe('TC-003: Social & CV Link Integrity @cross-browser', () => {
     // "opens a new tab, does not navigate the existing one") but its `url()` never
     // populates and no 'load' event fires. Playwright surfaces the resolved download URL
     // via the `download` event on the triggering page instead of via `popup.url()`.
+    // Branded Chrome/Edge (channel: 'chrome'/'msedge') ship a real PDF viewer, so there
+    // the popup navigates straight to the PDF and no `download` event fires at all --
+    // race both outcomes instead of assuming one.
     const popupPromise = context.waitForEvent('page');
-    const downloadPromise = page.waitForEvent('download');
+    const downloadPromise = page.waitForEvent('download', { timeout: 10_000 }).catch(() => null);
     await test.step('click the "CV" button in the hero TopSection', async () => {
       await homePage.heroSocialLinks.link('CV').click();
     });
 
-    const [popup, download] = await Promise.all([popupPromise, downloadPromise]);
+    const popup = await popupPromise;
+    const navigatedPromise = popup
+      .waitForURL(/Martin_Bruska_CV\.pdf/, { timeout: 10_000 })
+      .then(() => null)
+      .catch(() => null);
+    const download = await Promise.race([downloadPromise, navigatedPromise]);
+
     await test.step('a new tab opens (does not navigate the existing tab) and resolves to the CV PDF', async () => {
-      expect(download.url()).toBe('https://martinbruska.github.io/Martin_Bruska_CV.pdf');
+      const resolvedUrl = download ? download.url() : popup.url();
+      expect(resolvedUrl).toBe('https://martinbruska.github.io/Martin_Bruska_CV.pdf');
       await expect(page).toHaveURL(/\/$/);
     });
 
